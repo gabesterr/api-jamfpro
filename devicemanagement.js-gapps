@@ -1,5 +1,6 @@
 /* Usage: Paste text of devicemanagement.js-gapps into a new Google App Script */
 /* Then reload the associated sheet and use the JSSAPI menu, for example select a list of hostnames in a column and run the menu function 'Search for Computer Info from Hostnames' */
+/* In the column to the right of the hostnames you can define information you want to return such as mac_address, serial_number, username, email, udid */
 /* Credit where due: too many stackoverflow threads to track, MS B!nGPT for some cleanup and the mux cell parameters */
 /* Developed by Gabriel Sterritt gabesterr@users.noreply.github.com aka gabester on Mac Admins Slack */
 /* Implementation: Replace yourjss with your actual tenant name if using Jamf Cloud OR remove TENANTNAME and enter your on prem JSS for API_DEF and API_URL */
