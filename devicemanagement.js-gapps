@@ -1,14 +1,16 @@
 /* Usage: Paste text of devicemanagement.js-gapps into a new Google App Script */
 /* Then reload the associated sheet and use the JSSAPI menu, for example select a list of hostnames in a column and run the menu function 'Search for Computer Info from Hostnames' */
 /* In the column to the right of the hostnames you can define information you want to return such as mac_address, serial_number, username, email, udid */
+/* Full list of 19 computer values for computer results is at the end of this script or viewable in the XML return of any computer search */
 /* Credit where due: too many stackoverflow threads to track, MS B!nGPT for some cleanup and the mux cell parameters */
 /* Developed by Gabriel Sterritt gabesterr@users.noreply.github.com aka gabester on Mac Admins Slack */
 /* Implementation: Replace yourjss with your actual tenant name if using Jamf Cloud OR remove TENANTNAME and enter your on prem JSS for API_DEF and API_URL */
 const TENANTNAME = 'yourjss'; 
 const API_DEF = 'https://'+TENANTNAME+'.jamfcloud.com/api/v1/'
 const API_URL = 'https://'+TENANTNAME+'.jamfcloud.com/JSSResource/'; / if on-prem subsistute your full API URL here
-const APISPEC = 'tokensheet' / name of the sheet where your API Token is stored
-const APICELL = 'A1' / cell on the sheet where your API token is stored
+const APISPEC = 'tokensheet' // name of the sheet where your API Token is stored
+const APICELL = 'A1' // cell on the sheet where your API token is stored
+const APITYPE = 'computers' // eventually improved this enough to be used for multiple API methods e.g. computers, devices, users, sites.
 /* to get temp API token open Terminal and run the next line without the comments */
 /* curl -s -u "user:pass" "https://yourjss.jamfcloud.com/api/v1/auth/token" -X POST */
 /* These constants are defined to save additional complex calls via checkAndPromptValue and other functions */
@@ -35,7 +37,7 @@ function searchInfoforValue(searchInfo, searchValue) {
  var sessionToken = checkAndPromptValue(APISPEC, APICELL)
  var authHeader = 'Bearer ' + sessionToken;
  var options = { method : 'get', headers: {Authorization: authHeader}   }
- var response = UrlFetchApp.fetch(API_URL+'computers/match/'+searchInfo, options);
+ var response = UrlFetchApp.fetch(API_URL+APITYPE+'/match/'+searchInfo, options);
  if (!response.getResponseCode()) {
    SpreadsheetApp.getUi().alert('Could not get current item '+searchInfo);
  } else { searchResultText = response.getContentText(); }  
@@ -272,3 +274,28 @@ function multiCellAPICall() {
    var adjacentCell = sheet.getRange(range.getRow() + i, range.getColumn() + 3);
    adjacentCell.setValue(searchKeywithType(inputText1, inputText2));
  }                                         } // end function multiCellAPICall
+
+/* LIST OF COMPUTER RESULTS 
+<computers>	
+<size>		
+<computer>	
+<id>		
+<name>		
+<udid>		
+<serial_number>	
+<mac_address>	
+<alt_mac_address>
+<asset_tag/>	
+<bar_code_1/>	
+<bar_code_2/>	
+<username/>	
+<realname/>	
+<email/>	
+<email_address/>
+<room/>		
+<position/>	
+<building/>	
+<building_name/>
+<department/>	
+<department_name/>
+*/
