@@ -275,27 +275,20 @@ function multiCellAPICall() {
    adjacentCell.setValue(searchKeywithType(inputText1, inputText2));
  }                                         } // end function multiCellAPICall
 
-/* LIST OF COMPUTER RESULTS 
-<computers>	
-<size>		
-<computer>	
-<id>		
-<name>		
-<udid>		
-<serial_number>	
-<mac_address>	
-<alt_mac_address>
-<asset_tag/>	
-<bar_code_1/>	
-<bar_code_2/>	
-<username/>	
-<realname/>	
-<email/>	
-<email_address/>
-<room/>		
-<position/>	
-<building/>	
-<building_name/>
-<department/>	
-<department_name/>
+/* LIST OF COMPUTER RESULTS from SEARCH
+<computers>	        <size>		     <computer>
+<id>		            <name>		     <udid>		
+<serial_number>	    <mac_address>	 <alt_mac_address>
+<asset_tag/>	      <bar_code_1/>	 <bar_code_2/>	
+<username/>	        <realname/>	
+<email/>	          <email_address/>
+<room/>		          <position/>	
+<building/>	        <building_name/>
+<department/>	      <department_name/>
+
+LIST OF SPECIFIC INFO SUBSETS of id for COMPUTER - e.g. yourjss.jamfcloud.com/JSSResource/computers/id/##/subset/general
+general          location      purchasing
+peripherals      hardware      certificates
+security         software      extension_attributes
+group_accounts   iphones       configuration_profiles
 */
