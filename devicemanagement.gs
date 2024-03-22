@@ -96,45 +96,35 @@ function checkAPIOperation() { // a function to validate can access Jamf Pro API
   } else {
     SpreadsheetApp.getUi()
     .alert('Jamf Pro API at '+API_URL+' is '+response.getContentText());
-  }                 } // end checkAPIOperation calls checkAdminPromptValue
+  }                 }                                   // end checkAPIOperation calls checkAdminPromptValue
 
 function checkAndPromptValue(sheetName, cell) {   
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  //var sheet1 = spreadsheet.getSheetByName('Sheet1');
   var sheet = spreadsheet.getSheetByName(sheetName);
-  
   var value = sheet.getRange(cell).getValue();
   if (value === "") {
     var newValue = Browser.inputBox("NOTE: get a new token with 'curl -s -u user:pass https://yourjss.jamfcloud.com/api/v1/auth/token -X POST' ... Enter a value for "+cell+" in "+sheet+": ");
     sheet.getRange(cell).setValue(newValue);
     value = newValue
   }  
-  return value                                } // end function checkAndPromptValue
+  return value                                }         // end function checkAndPromptValue
 
 function computerAPICall() {
  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
- var range = sheet.getActiveRange();
- // Extend the range to include the adjacent column
+ var range = sheet.getActiveRange();                    // Extend the range to include the adjacent column
  var extendedRange = sheet.getRange(range.getRow(), range.getColumn(), range.getNumRows(), range.getNumColumns() + 1);
  var activeSelection = extendedRange.getValues();
   for (var i = 0; i < activeSelection.length; i++) {
-   var inputText1 = activeSelection[i][0].toString(); // Get the value from the first column
-   var inputText2 = activeSelection[i][1].toString(); // Get the value from the second column
-   // Get the cell two columns to the right of the current cell
+   var inputText1 = activeSelection[i][0].toString();   // Get the value from the first column
+   var inputText2 = activeSelection[i][1].toString();   // Get the value from the second column
    xmlData=searchInfoforValue(inputText1, inputText2)
+   // Get the cell two columns to the right of the current cell
    var adjacentCell = sheet.getRange(range.getRow() + i, range.getColumn() + 2);
-   adjacentCell.setValue(xmlData);
-  // now process that XML Data
-if (!xmlData.includes("<size>0</size></computers>")) {
+   adjacentCell.setValue(xmlData);                      // now process that XML Data
+if (!xmlData.includes("<size>0</size></computers>")) {  // ADD VALIDATION if size > 1
 var document = XmlService.parse(xmlData);
 var root = document.getRootElement();
 Logger.log('Root Element Name: ' + root.getName());
-//var mySize = root.getChild('size');
-//  SpreadsheetApp.getUi()
-//  .alert('Root Size: ' + mySize);
-// if ( mySize > 0 ) { 
-// Get the values
-//var computerElement = root.getChild('computers').getChild('computer');
 var computerElement = root.getChild('computer');
 var myValue = computerElement.getChild(inputText2).getText();
 if ( myValue === "" ) { myValue = "VALUENOTFOUND" } /*} else { SpreadsheetApp.getUi()
@@ -269,7 +259,6 @@ function multiCellAPICall() {
   for (var i = 0; i < activeSelection.length; i++) {
    var inputText1 = activeSelection[i][0].toString(); // Get the value from the first column
    var inputText2 = activeSelection[i][1].toString(); // Get the value from the second column
-   // Reverse the input texts
    //thisSearch = searchKeywithType(inputText1, inputText2);
    // Get the cell three columns to the right of the current cell
    var adjacentCell = sheet.getRange(range.getRow() + i, range.getColumn() + 3);
@@ -277,15 +266,15 @@ function multiCellAPICall() {
  }                                         } // end function multiCellAPICall
 
 /* LIST OF COMPUTER RESULTS from SEARCH
-<computers>	        <size>		     <computer>
-<id>		            <name>		     <udid>		
-<serial_number>	    <mac_address>	 <alt_mac_address>
-<asset_tag/>	      <bar_code_1/>	 <bar_code_2/>	
-<username/>	        <realname/>	
-<email/>	          <email_address/>
-<room/>		          <position/>	
-<building/>	        <building_name/>
-<department/>	      <department_name/>
+<computers>	       <size>		         <computer>
+<id>		           <name>		         <udid>		
+<serial_number>    <mac_address>	   <alt_mac_address>
+<asset_tag/>       <bar_code_1/>	   <bar_code_2/>	
+<username/>        <realname/>	
+<email/>           <email_address/>
+<room/>            <position/>	
+<building/>        <building_name/>
+<department/>      <department_name/>
 
 LIST OF SPECIFIC INFO SUBSETS of id for COMPUTER - e.g. yourjss.jamfcloud.com/JSSResource/computers/id/##/subset/general
 general          location      purchasing
