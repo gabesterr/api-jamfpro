@@ -1,4 +1,4 @@
-/* Usage: Paste text of devicemanagement.js-gapps into a new Google App Script */
+/* Usage: Paste text of devicemanagement.gs into a new Google App Script */
 /* Then reload the associated sheet and use the JSSAPI menu, for example select a list of hostnames in a column and run the menu function 'Search for Computer Info from Hostnames' */
 /* In the column to the right of the hostnames you can define information you want to return such as mac_address, serial_number, username, email, udid */
 /* Full list of 19 computer values for computer results is at the end of this script or viewable in the XML return of any computer search */
@@ -6,13 +6,15 @@
 /* Developed by Gabriel Sterritt gabesterr@users.noreply.github.com aka gabester on Mac Admins Slack */
 /* Implementation: Replace yourjss with your actual tenant name if using Jamf Cloud OR remove TENANTNAME and enter your on prem JSS for API_DEF and API_URL */
 const TENANTNAME = 'yourjss'; 
-const API_DEF = 'https://'+TENANTNAME+'.jamfcloud.com/api/v1/'
-const API_URL = 'https://'+TENANTNAME+'.jamfcloud.com/JSSResource/'; / if on-prem subsistute your full API URL here
+const API_DEF = 'https://'+TENANTNAME+'.jamfcloud.com/api/v1/';       // if on-prem subsistute your full API URL here
+const API_URL = 'https://'+TENANTNAME+'.jamfcloud.com/JSSResource/'; // if on-prem subsistute your full API URL here
 const APISPEC = 'tokensheet' // name of the sheet where your API Token is stored
-const APICELL = 'A1' // cell on the sheet where your API token is stored
+const APICELL = 'A1'; // cell on the sheet where your API token is stored
 const APITYPE = 'computers' // eventually improved this enough to be used for multiple API methods e.g. computers, devices, users, sites.
 /* to get temp API token open Terminal and run the next line without the comments */
 /* curl -s -u "user:pass" "https://yourjss.jamfcloud.com/api/v1/auth/token" -X POST */
+/* select and paste the value returned for token in the APICELL you indicated */
+/* you may also want to note the token expiration time (indicated in UMT, e.g "London" */
 /* These constants are defined to save additional complex calls via checkAndPromptValue and other functions */
 
 function onOpen() {
@@ -24,12 +26,11 @@ function onOpen() {
     //.addItem('Get full Info from id','callAPIFullInfo')
     .addSeparator()
     .addItem('Get Info from Search List','multiCellAPICall')
-    .addItem('Get Sheet Names','getSheetnames')
     .addSeparator()
     .addItem('Check Connection', 'checkAPIOperation')
     .addItem('Get Reports', 'getJSSReports')
-    .addSeparator()
-    .addItem('Create Group (experimental)', 'makeJSSGroup')
+    //.addSeparator()
+    //.addItem('Create Group (experimental)', 'makeJSSGroup')
     .addToUi();  
 }
 
@@ -57,7 +58,7 @@ function callAPIFullInfo() {
    var adjacentCell = sheet.getRange(range.getRow() + i, range.getColumn() + 2);
    adjacentCell.setValue(xmlData);
   // now process that XML Data
-if (!xmlData.includes("<size>0</size></computers>")) {
+if (!xmlData.includes("<size>0</size></computers>")) {  // ADD VALIDATION if size > 1
 var document = XmlService.parse(xmlData);
 var root = document.getRootElement();
 Logger.log('Root Element Name: ' + root.getName());
@@ -78,7 +79,7 @@ var adjacentCell2 = sheet.getRange(range.getRow() + i, range.getColumn() + 3);
 
 function getJSSReports() { // a dummy function to validate onOpen menus loaded
   SpreadsheetApp.getUi() // Or DocumentApp or FormApp.
-     .alert('You clicked the first menu getJSSReports function!');        } // end getJSSReports dummy function
+     .alert('You clicked the last menu item getJSSReports function!');        } // end getJSSReports dummy function
 
 function checkAPIOperation() { // a function to validate can access Jamf Pro API
   var sessionToken = checkAndPromptValue(APISPEC, APICELL)
